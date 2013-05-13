@@ -178,7 +178,7 @@ def parse_user_agent_ie(ua):
     def parse_user_agent_ie_version():
         ie_version_index = find_end_of_token(ua, "IE ")
         next_semicolon = find_next(ua, "; ", ie_version_index)
-        return ua[ie_version_index:next_semicolon]
+        return clean_up_version(ua[ie_version_index:next_semicolon])
     return UserAgent("Windows", parse_user_agent_windows_version(ua),
                      "IE", parse_user_agent_ie_version())
 
