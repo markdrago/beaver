@@ -15,7 +15,7 @@ class TestMapLineToBrowser(unittest.TestCase):
         self.assertEqual("www.myfavoritesite.com", res.host)
         self.assertEqual("212.85.128.191", res.remoteip)
         self.assertEqual("15/Apr/2013:00:16:07", res.date)
-        self.assertEqual("AdsBot-Google-Mobile (+http://www.google.com/mobile/adsbot.html) Mozilla (iPhone; U; CPU iPhone OS 3 0 like Mac OS X) AppleWebKit (KHTML, like Gecko) Mobile Safari", res.ua)
+        self.assertIsNotNone(res.ua)
 
     def test_parse_line_error(self):
         rawline = "Error writing to log file.     538567 messages lost."
@@ -78,5 +78,9 @@ class TestMapLineToBrowser(unittest.TestCase):
             UserAgent("Android", "2.2", "Android", "4.0") :
               "Mozilla/5.0 (Linux; U; Android 2.2; en-us; DROID2 GLOBAL Build/S273) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
             UserAgent("Android", "2.2", "Android", "4.0") :
-              "Mozilla/5.0 (Linux; U; Android 2.2; en-gb; GT-P1000 Build/FROYO) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+              "Mozilla/5.0 (Linux; U; Android 2.2; en-gb; GT-P1000 Build/FROYO) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
+            UserAgent("Android", "UNKNOWN", "FirefoxMobile", "20.0") :
+              "Mozilla/5.0 (Android; Mobile; rv:20.0) Gecko/20.0 Firefox/20.0",
+            UserAgent("Windows", "UNKNOWN", "IE", "10.0") :
+              "Mozilla/5.0 (compatible; MSIE 10.0; Win64; Trident/6.0)"
         }

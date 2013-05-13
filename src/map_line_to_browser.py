@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys
 import re
 
@@ -27,6 +28,10 @@ class LogLine(object):
         self.remoteip = remoteip
         self.date = date
         self.ua = ua
+    
+    #TODO expand this when looking at sessions starts
+    def __str__(self):
+        return str(self.ua)
 
 class InvalidLogLine(Exception):
     def __init__(self, value):
@@ -41,7 +46,7 @@ def parse_line(line):
     host = pieces[0]
     remoteip = pieces[2]
     date = pieces[5][1:]
-    ua = pieces[7].split('"')[0].strip()
+    ua = parse_user_agent(pieces[7].split('"')[0].strip())
     return LogLine(line, host, remoteip, date, ua)
 
 def find_next(target, chars, start=0):
@@ -79,7 +84,10 @@ def parse_user_agent_windows_version(ua):
         "NT 6.2": "8",
         "NT 6.3": "Blue"
     }
-    win_version_index = find_end_of_token(ua, "Windows ")
+    try:
+        win_version_index = find_end_of_token(ua, "Windows ")
+    except ValueError:
+        return "UNKNOWN"
     stop_point = find_next(ua, ";)", win_version_index)
     ua_win_version = ua[win_version_index:stop_point]
     return win_version_dict.get(ua_win_version, "UNKNOWN")
@@ -105,10 +113,10 @@ def parse_user_agent_os(ua):
 #not thrilled with this approach, may be fine, but meh
 def parse_user_agent(ua):
     ua_map = {
+        "Firefox": parse_user_agent_firefox,
         "Android" : parse_user_agent_android,
         "iPad": parse_user_agent_ipad,
         "iPhone": parse_user_agent_iphone,
-        "Firefox": parse_user_agent_firefox,
         "Chrome": parse_user_agent_chrome,
         "MSIE": parse_user_agent_ie,
         "IE": parse_user_agent_ie
@@ -146,11 +154,14 @@ def parse_user_agent_safari_version(ua):
     return clean_up_version(ua[safari_version_index:stop_point])
 
 def parse_user_agent_firefox(ua):
+    def handle_mobile_firefox():
+        return UserAgent("Android", "UNKNOWN", "FirefoxMobile", parse_user_agent_firefox_version())
     def parse_user_agent_firefox_version():
         ff_version_index = find_end_of_token(ua, "Firefox/")
         stop_point = find_next(ua, ' ', ff_version_index)
         if stop_point == -1: stop_point = len(ua)
         return clean_up_version(ua[ff_version_index:stop_point])
+    if "Android" in ua: return handle_mobile_firefox()
     os_details = parse_user_agent_os(ua)
     return UserAgent(os_details[0], os_details[1], "Firefox", parse_user_agent_firefox_version())
 
@@ -166,7 +177,15 @@ def parse_user_agent_chrome(ua):
 def parse_user_agent_ie(ua):
     def parse_user_agent_ie_version():
         ie_version_index = find_end_of_token(ua, "IE ")
-        next_semicolon = ua.index(";", ie_version_index)
+        next_semicolon = find_next(ua, "; ", ie_version_index)
         return ua[ie_version_index:next_semicolon]
     return UserAgent("Windows", parse_user_agent_windows_version(ua),
                      "IE", parse_user_agent_ie_version())
+
+def map_all():
+    for line in sys.stdin:
+        line = line.strip()
+        print(str(parse_line(line)) + " 1")
+
+if __name__ == '__main__':
+    map_all()
