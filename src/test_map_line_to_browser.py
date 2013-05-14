@@ -84,5 +84,7 @@ class TestMapLineToBrowser(unittest.TestCase):
             UserAgent("Android", "UNKNOWN", "FirefoxMobile", "20.0") :
               "Mozilla/5.0 (Android; Mobile; rv:20.0) Gecko/20.0 Firefox/20.0",
             UserAgent("Windows", "UNKNOWN", "IE", "10.0") :
-              "Mozilla/5.0 (compatible; MSIE 10.0; Win64; Trident/6.0)"
+              "Mozilla/5.0 (compatible; MSIE 10.0; Win64; Trident/6.0)",
+            UserAgent("MacOSX", "10.6", "Safari", "5.1") :
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.13+ (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2"
         }
