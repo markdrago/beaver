@@ -86,5 +86,21 @@ class TestMapLineToBrowser(unittest.TestCase):
             UserAgent("Windows", "UNKNOWN", "IE", "10.0") :
               "Mozilla/5.0 (compatible; MSIE 10.0; Win64; Trident/6.0)",
             UserAgent("MacOSX", "10.6", "Safari", "5.1") :
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.13+ (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2"
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.13+ (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2",
+            UserAgent("Googlebot", "2.1", "Googlebot", "2.1") :
+              "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+            UserAgent("Bingbot", "2.0", "Bingbot", "2.0") :
+              "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)",
+            UserAgent("Adidxbot", "2.0", "Adidxbot", "2.0") :
+              "adidxbot/2.0 (+http://search.msn.com/msnbot.htm)",
+            UserAgent("Msnbot", "2.0", "Msnbot", "2.0") :
+              "msnbot/2.0b (+http://search.msn.com/msnbot.htm)",
+            UserAgent("Adsbot-Google", "UNKNOWN", "Adsbot-Google", "UNKNOWN") :
+              "AdsBot-Google (+http://www.google.com/adsbot.html)",
+            UserAgent("Google-Site-Verification", "1.0", "Google-Site-Verification", "1.0") :
+              "Mozilla/5.0 (compatible; Google-Site-Verification/1.0)",
+            UserAgent("Baiduspider", "2.0", "Baiduspider", "2.0") :
+              "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)",
+            UserAgent("Yandexbot", "3.0", "Yandexbot", "3.0") :
+              "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)"
         }

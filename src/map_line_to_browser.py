@@ -11,6 +11,9 @@ class UserAgent(object):
         self.browser = browser
         self.browser_version = browser_version
     
+    def isUnknown(self):
+        return False
+
     def __repr__(self):
         return self.os + ' ' + self.os_version + ' ' + self.browser + ' ' + self.browser_version
 
@@ -18,6 +21,12 @@ class UserAgent(object):
         return self.__dict__ == other.__dict__
 
 class UnknownUserAgent(object):
+    def __init__(self, rawua):
+        self.rawua = rawua
+
+    def isUnknown(self):
+        return True
+
     def __str__(self):
         return 'UNKNOWN'
 
@@ -84,6 +93,14 @@ def parse_line(line):
 
 def parse_user_agent(ua):
     ua_tuples = [
+        ('Googlebot', parse_bot_agent('Googlebot')),
+        ('bingbot', parse_bot_agent('bingbot')),
+        ('adidxbot', parse_bot_agent('adidxbot')),
+        ('msnbot', parse_bot_agent('msnbot')),
+        ('AdsBot-Google', parse_bot_agent('AdsBot-Google')),
+        ('Google-Site-Verification', parse_bot_agent('Google-Site-Verification')),
+        ('Baiduspider', parse_bot_agent('Baiduspider')),
+        ('YandexBot', parse_bot_agent('YandexBot')),
         ('Firefox', parse_user_agent_firefox),
         ('Android', parse_user_agent_android),
         ('iPad', parse_user_agent_ipad),
@@ -96,7 +113,7 @@ def parse_user_agent(ua):
     for (key, parser) in ua_tuples:
         if key in ua:
             return parser(ua)
-    return UnknownUserAgent()
+    return UnknownUserAgent(ua)
 
 ## OS specific parsing functions
 
@@ -177,10 +194,26 @@ def parse_user_agent_ie(ua):
     return UserAgent('Windows', parse_user_agent_windows_version(ua),
                      'IE', parse_user_agent_ie_version())
 
+## bot specific parsers
+
+def parse_bot_agent(botname):
+    def parse_bot_func(ua):
+        version = clean_up_version(token_between(ua, botname + '/', '; )'))
+        return UserAgent(botname.title(), version, botname.title(), version)
+    return parse_bot_func
+
 def map_all():
     for line in sys.stdin:
         line = line.strip()
         print(str(parse_line(line)) + ' 1')
 
+def print_all_unknown():
+    for line in sys.stdin:
+        line = line.strip()
+        parsed = parse_line(line)
+        if parsed.ua.isUnknown():
+            print(parsed.ua.rawua)
+
 if __name__ == '__main__':
     map_all()
+#    print_all_unknown()
