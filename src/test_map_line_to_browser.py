@@ -102,5 +102,11 @@ class TestMapLineToBrowser(unittest.TestCase):
             UserAgent("Baiduspider", "2.0", "Baiduspider", "2.0") :
               "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)",
             UserAgent("Yandexbot", "3.0", "Yandexbot", "3.0") :
-              "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)"
+              "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)",
+            UserAgent("Adsbot-Google-Mobile", "UNKNOWN", "Adsbot-Google-Mobile", "UNKNOWN") :
+              "AdsBot-Google-Mobile (+http://www.google.com/mobile/adsbot.html) Mozilla (iPhone; U; CPU iPhone OS 3 0 like Mac OS X) AppleWebKit (KHTML, like Gecko) Mobile Safari",
+            UserAgent("Googlebot-Mobile", "2.1", "Googlebot-Mobile", "2.1") :
+              "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_1 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8B117 Safari/6531.22.7 (compatible; Googlebot-Mobile/2.1; +http://www.google.com/bot.html)",
+            UserAgent("WindowsPhone", "7.5", "IE", "9.0") :
+              "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; NOKIA; Lumia 822)"
         }

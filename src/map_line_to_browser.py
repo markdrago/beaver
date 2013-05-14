@@ -31,11 +31,12 @@ class UnknownUserAgent(object):
         return 'UNKNOWN'
 
 class LogLine(object):
-    def __init__(self, line, host, remoteip, date, ua):
+    def __init__(self, line, host, remoteip, date, rawua, ua):
         self.line = line
         self.host = host
         self.remoteip = remoteip
         self.date = date
+        self.rawua = rawua
         self.ua = ua
     
     #TODO expand this when looking at sessions
@@ -88,15 +89,18 @@ def parse_line(line):
     host = pieces[0]
     remoteip = pieces[2]
     date = pieces[5][1:]
-    ua = parse_user_agent(pieces[7].split('"')[0].strip())
-    return LogLine(line, host, remoteip, date, ua)
+    rawua = pieces[7].split('"')[0].strip()
+    ua = parse_user_agent(rawua)
+    return LogLine(line, host, remoteip, date, rawua, ua)
 
 def parse_user_agent(ua):
     ua_tuples = [
+        ('Googlebot-Mobile', parse_bot_agent('Googlebot-Mobile')),
         ('Googlebot', parse_bot_agent('Googlebot')),
         ('bingbot', parse_bot_agent('bingbot')),
         ('adidxbot', parse_bot_agent('adidxbot')),
         ('msnbot', parse_bot_agent('msnbot')),
+        ('AdsBot-Google-Mobile', parse_bot_agent('AdsBot-Google-Mobile')),
         ('AdsBot-Google', parse_bot_agent('AdsBot-Google')),
         ('Google-Site-Verification', parse_bot_agent('Google-Site-Verification')),
         ('Baiduspider', parse_bot_agent('Baiduspider')),
@@ -107,6 +111,7 @@ def parse_user_agent(ua):
         ('iPhone', parse_user_agent_iphone),
         ('Chrome', parse_user_agent_chrome),
         ('Safari', parse_user_agent_safari),
+        ('Windows Phone', parse_user_agent_windows_phone),
         ('MSIE', parse_user_agent_ie),
         ('IE', parse_user_agent_ie)
     ]
@@ -188,11 +193,18 @@ def parse_user_agent_safari(ua):
     os_details = parse_user_agent_os(ua)
     return UserAgent(os_details[0], os_details[1], 'Safari', parse_user_agent_safari_version(ua))
 
+def parse_user_agent_windows_phone(ua):
+    def parse_user_agent_windows_phone_version():
+        return clean_up_version(token_between(ua, 'Windows Phone OS ', ';'))
+    return UserAgent("WindowsPhone", parse_user_agent_windows_phone_version(),
+                     "IE", parse_user_agent_ie_version(ua))
+
+def parse_user_agent_ie_version(ua):
+    return clean_up_version(token_between(ua, 'IE ', '; '))
+
 def parse_user_agent_ie(ua):
-    def parse_user_agent_ie_version():
-        return clean_up_version(token_between(ua, 'IE ', '; '))
     return UserAgent('Windows', parse_user_agent_windows_version(ua),
-                     'IE', parse_user_agent_ie_version())
+                     'IE', parse_user_agent_ie_version(ua))
 
 ## bot specific parsers
 
@@ -202,10 +214,7 @@ def parse_bot_agent(botname):
         return UserAgent(botname.title(), version, botname.title(), version)
     return parse_bot_func
 
-def map_all():
-    for line in sys.stdin:
-        line = line.strip()
-        print(str(parse_line(line)) + ' 1')
+## debugging methods (useful when checking coverage of parsing on real-world data
 
 def print_all_unknown():
     for line in sys.stdin:
@@ -214,6 +223,21 @@ def print_all_unknown():
         if parsed.ua.isUnknown():
             print(parsed.ua.rawua)
 
+def print_all_partially_unknown():
+    for line in sys.stdin:
+        line = line.strip()
+        parsed = parse_line(line)
+        if 'UNKNOWN' in str(parsed):
+            print(str(parsed) + ' ' + parsed.rawua)
+
+## main method
+
+def map_all():
+    for line in sys.stdin:
+        line = line.strip()
+        print(str(parse_line(line)) + ' 1')
+
 if __name__ == '__main__':
     map_all()
 #    print_all_unknown()
+#    print_all_partially_unknown()
